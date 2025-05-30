@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h2 id="roleHeader"></h2>
+  <div id="opsSection" style="display: none">
+    <h3>Upload File for Client</h3>
+    <form id="uploadForm">
+      <input type="email" placeholder="Client Email" id="clientEmail" required>
+      <input type="file" id="uploadFile" required>
+      <button type="submit">Upload</button>
+    </form>
+  </div>
+  <div id="clientSection" style="display: none">
+    <h3>Download Your Files</h3>
+    <ul id="fileList"></ul>
+  </div>
+  <script src="dashboard.js"></script>
+</body>
+</html>
