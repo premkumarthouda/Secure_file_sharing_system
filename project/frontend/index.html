@@ -1,27 +1,38 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
   <title>Secure File Sharing - Login/Register</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h2>Login</h2>
-  <form id="loginForm">
-    <input type="email" placeholder="Email" id="loginEmail" required>
-    <input type="password" placeholder="Password" id="loginPassword" required>
-    <button type="submit">Login</button>
-  </form>
+  <div class="container">
+    <div class="tabs">
+      <button class="tab-button active" data-tab="login">Login</button>
+      <button class="tab-button" data-tab="register">Register</button>
+    </div>
 
-  <h2>Register</h2>
-  <form id="registerForm">
-    <input type="email" placeholder="Email" id="registerEmail" required>
-    <input type="password" placeholder="Password" id="registerPassword" required>
-    <select id="registerRole">
-      <option value="client">Client</option>
-      <option value="ops">Ops</option>
-    </select>
-    <button type="submit">Register</button>
-  </form>
+    <div class="form-container">
+      <form id="loginForm" class="form active">
+        <h2>Login</h2>
+        <input type="email" placeholder="Email" id="loginEmail" required>
+        <input type="password" placeholder="Password" id="loginPassword" required>
+        <button type="submit">Login</button>
+      </form>
+
+      <form id="registerForm" class="form">
+        <h2>Register</h2>
+        <input type="email" placeholder="Email" id="registerEmail" required>
+        <input type="password" placeholder="Password" id="registerPassword" required>
+        <select id="registerRole" required>
+          <option value="">Select Role</option>
+          <option value="client">Client</option>
+          <option value="ops">Ops</option>
+        </select>
+        <button type="submit">Register</button>
+      </form>
+    </div>
+  </div>
 
   <script src="script.js"></script>
 </body>
