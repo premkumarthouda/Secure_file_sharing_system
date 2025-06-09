@@ -1,3 +1,15 @@
+
+document.querySelectorAll(".tab-button").forEach(button => {
+  button.addEventListener("click", () => {
+    const tab = button.getAttribute("data-tab");
+
+    document.querySelectorAll(".tab-button").forEach(btn => btn.classList.remove("active"));
+    button.classList.add("active");
+
+    document.querySelectorAll(".form").forEach(form => form.classList.remove("active"));
+    document.getElementById(`${tab}Form`).classList.add("active");
+  });
+
 const backend = "http://localhost:8000";
 // Register
 document.getElementById("registerForm").onsubmit = async (e) => {
