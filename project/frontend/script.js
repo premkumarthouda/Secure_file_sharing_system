@@ -8,6 +8,7 @@ document.querySelectorAll(".tab-button").forEach(button => {
 
     document.querySelectorAll(".form").forEach(form => form.classList.remove("active"));
     document.getElementById(`${tab}Form`).classList.add("active");
+  })
   });
 
 const backend = "http://localhost:8000";
