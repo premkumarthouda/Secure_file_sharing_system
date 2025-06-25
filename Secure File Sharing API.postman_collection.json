@@ -1,0 +1,640 @@
+{
+	"info": {
+		"_postman_id": "5fa59ab5-28f5-44ea-82c4-e925610b33b2",
+		"name": "Secure File Sharing API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "46162013",
+		"_collection_link": "https://premkumar-3973192.postman.co/workspace/98025074-45c4-41a7-8cf1-6b92b97f8ba8/collection/46162013-5fa59ab5-28f5-44ea-82c4-e925610b33b2?action=share&source=collection_link&creator=46162013"
+	},
+	"item": [
+		{
+			"name": "Register",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"let roleCounter = pm.environment.get(\"roleCounter\") || 0;\r",
+							"const roles = [\"client\", \"ops\"];\r",
+							"pm.environment.set(\"user_role\", roles[roleCounter % roles.length]);\r",
+							"roleCounter++;\r",
+							"pm.environment.set(\"roleCounter\", roleCounter);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response status code is 200\", function () {\r",
+							"    pm.expect(pm.response.code).to.eql(200);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Response time is less than 200ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(200);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Response contains expected fields for 'client' role\", function () {\r",
+							"    const responseData = pm.response.json();\r",
+							"    \r",
+							"    pm.expect(responseData).to.be.an('object');\r",
+							"    pm.expect(responseData).to.include.all.keys('email', 'name', 'age', 'role');\r",
+							"    \r",
+							"    pm.expect(responseData.email).to.be.a('string').and.to.match(/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/, \"Email format is invalid\");\r",
+							"    pm.expect(responseData.name).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Name should not be empty\");\r",
+							"    pm.expect(responseData.age).to.be.a('number').and.to.be.at.least(0, \"Age should be a non-negative number\");\r",
+							"    pm.expect(responseData.role).to.equal('client', \"Role should be 'client'\");\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Response body contains the expected fields for 'ops' role\", function () {\r",
+							"    const responseData = pm.response.json();\r",
+							"    \r",
+							"    pm.expect(responseData).to.be.an('object');\r",
+							"    pm.expect(responseData).to.have.all.keys('id', 'username', 'email', 'role', 'createdAt', 'updatedAt');\r",
+							"    \r",
+							"    pm.expect(responseData.role).to.equal('ops');\r",
+							"    pm.expect(responseData.email).to.be.a('string').that.matches(/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/, \"Email format is invalid\");\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Validate that all fields in the response are of the correct data type\", function () {\r",
+							"    const responseData = pm.response.json();\r",
+							"\r",
+							"    pm.expect(responseData).to.be.an('object');\r",
+							"\r",
+							"    const fields = {\r",
+							"        email: 'string',\r",
+							"        age: 'number',\r",
+							"        name: 'string',\r",
+							"        address: 'string',\r",
+							"        city: 'string',\r",
+							"        state: 'string',\r",
+							"        phone: 'string'\r",
+							"    };\r",
+							"\r",
+							"    Object.keys(fields).forEach(function (field) {\r",
+							"        if (responseData.hasOwnProperty(field)) {\r",
+							"            pm.expect(responseData[field]).to.be.a(fields[field], `${field} should be of type ${fields[field]}`);\r",
+							"        }\r",
+							"    });\r",
+							"});\r",
+							"var responseData = pm.response.json();\r",
+							"\r",
+							"// Test for response status code and time\r",
+							"pm.test(\"Response status code is 200 and response time is less than 200ms\", function () {\r",
+							"    pm.expect(pm.response.code).to.eql(200);\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(200);\r",
+							"});\r",
+							"\r",
+							"// Test for expected fields and their types\r",
+							"pm.test(\"Response contains expected fields and types\", function () {\r",
+							"    pm.expect(responseData).to.be.an('object');\r",
+							"\r",
+							"    const commonFields = {\r",
+							"        email: 'string',\r",
+							"        name: 'string',\r",
+							"        age: 'number'\r",
+							"    };\r",
+							"\r",
+							"    const clientFields = ['role'];\r",
+							"    const opsFields = ['id', 'username', 'createdAt', 'updatedAt'];\r",
+							"\r",
+							"    pm.expect(responseData).to.include.all.keys(...Object.keys(commonFields), ...clientFields, ...opsFields);\r",
+							"\r",
+							"    Object.keys(commonFields).forEach(function (field) {\r",
+							"        pm.expect(responseData[field]).to.be.a(commonFields[field], `${field} should be of type ${commonFields[field]}`);\r",
+							"    });\r",
+							"\r",
+							"    if (responseData.role === 'client') {\r",
+							"        pm.expect(responseData.role).to.equal('client', \"Role should be 'client'\");\r",
+							"    } else if (responseData.role === 'ops') {\r",
+							"        pm.expect(responseData.role).to.equal('ops', \"Role should be 'ops'\");\r",
+							"    }\r",
+							"});\r",
+							"\r",
+							"// Test for success message and user role\r",
+							"pm.test(\"Response contains a success message and appropriate user role\", function () {\r",
+							"    pm.expect(responseData).to.have.property('message').that.is.a('string').and.to.include('success', \"Success message is missing or incorrect\");\r",
+							"    pm.expect(responseData).to.have.property('role').that.is.oneOf(['client', 'ops'], \"Role is not valid\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"client@example.com\",\r\n    \"password\": \"yourpassword\",\r\n    \"role\": \"{{user_role}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"register"
+					]
+				},
+				"description": "## User Registration API\n\nThis endpoint allows new users to register by providing their details. It accepts a POST request to the following URL:\n\n```\nPOST http://localhost:8000/register\n\n ```\n\n### Request Body\n\nThe request body must be a JSON object containing the following parameters:\n\n- **email** (string): The email address of the user. This must be unique and valid.\n    \n- **password** (string): The password chosen by the user for account security.\n    \n- **role** (string): The role of the user, which can be either `client` or `ops`. This defines the user's access level within the application.\n    \n\n### Example JSON Payload\n\nFor a user with the `client` role:\n\n``` json\n{\n  \"email\": \"client@example.com\",\n  \"password\": \"yourpassword\",\n  \"role\": \"client\"\n}\n\n ```\n\nFor a user with the `ops` role:\n\n``` json\n{\n  \"email\": \"ops@example.com\",\n  \"password\": \"yourpassword\",\n  \"role\": \"ops\"\n}\n\n ```\n\n### Purpose\n\nThis API is intended for user registration, allowing users to create accounts with specified roles. Ensure that the email provided is unique to prevent registration conflicts."
+			},
+			"response": []
+		},
+		{
+			"name": "Verify Email",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const response = pm.response.json();\r",
+							"\r",
+							"// Check if the response message indicates successful email verification\r",
+							"if (response.message === \"Email verified successfully\") {\r",
+							"  pm.environment.set(\"is_verified\", \"true\"); // Set environment variable for verification status\r",
+							"  pm.visualizer.set(\"<h1>Email verification successful</h1>\"); // Visualize success message\r",
+							"} else {\r",
+							"  pm.visualizer.set(\"<h1>Email verification failed</h1>\"); // Visualize failure message\r",
+							"}\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"message\": \"Email verification endpoint called\"}\r\n  \r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/verify?token=YOUR_VERIFICATION_TOKEN",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"verify"
+					],
+					"query": [
+						{
+							"key": "token",
+							"value": "YOUR_VERIFICATION_TOKEN"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"try {\r",
+							"    const response = pm.response.json();\r",
+							"    pm.test(\"Status code is 200\", function () {\r",
+							"        pm.response.to.have.status(200);\r",
+							"    });\r",
+							"    if (response.access_token && typeof response.access_token === \"string\") {\r",
+							"        pm.environment.set(\"access_token\", response.access_token);\r",
+							"        console.log(\"access_token saved:\", response.access_token.substring(0, 10) + \"...\");\r",
+							"    } else {\r",
+							"        console.log(\"No valid access_token in response:\", response.message || \"Unknown error\");\r",
+							"        pm.test(\"Access token is present\", function () {\r",
+							"            pm.expect(response.access_token).to.exist;\r",
+							"        }).skip();\r",
+							"    }\r",
+							"} catch (error) {\r",
+							"    console.log(\"Error in script:\", error.message);\r",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Tests Script\r",
+							"const response = pm.response.json();\r",
+							"\r",
+							"// Check if the login was successful\r",
+							"if (response.access_token) {\r",
+							"  pm.environment.set(\"access_token\", response.access_token);\r",
+							"  console.log(\"Login successful, access_token saved to environment\");\r",
+							"} else {\r",
+							"  console.log(\"Login failed:\", response.message || \"No access_token in response\");\r",
+							"}\r",
+							"\r",
+							"// Verify status code\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"client@example.com\",\r\n  \"password\": \"password123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "upload",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// Pre-request Script\r",
+							"const accessToken = pm.environment.get(\"access_token\");\r",
+							"\r",
+							"// Check if accessToken exists and is a string\r",
+							"if (!accessToken || typeof accessToken !== \"string\" || accessToken.trim() === \"\") {\r",
+							"    console.log(\"No access_token found or invalid. Please login first using /login endpoint.\");\r",
+							"    throw new Error(\"Authentication required\");\r",
+							"}\r",
+							"\r",
+							"// Log the first 10 characters of the token\r",
+							"console.log(\"access_token found:\", accessToken.substring(0, 10) + \"...\");\r",
+							"\r",
+							"// Dynamically set client_email if needed\r",
+							"pm.environment.set(\"client_email\", \"client@example.com\");\r",
+							"console.log(\"Set client_email to:\", pm.environment.get(\"client_email\"));\r",
+							"\r",
+							"// Ensure the file data is present in the request body\r",
+							"const fileData = {\"file\":{\"type\":\"file\",\"description\":\"\"},\"client_email\":pm.environment.get(\"client_email\")};\r",
+							"\r",
+							"if (!fileData.file || !fileData.client_email) {\r",
+							"    console.error(\"File data or client_email is missing in the request body.\");\r",
+							"    throw new Error(\"Invalid request body data.\");\r",
+							"}\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Tests Script\r",
+							"const response = pm.response.json();\r",
+							"\r",
+							"// Check if the upload was successful\r",
+							"if (response.message === \"File uploaded successfully\" && response.file_id) {\r",
+							"  pm.environment.set(\"file_id\", response.file_id);\r",
+							"  console.log(\"File uploaded successfully, file_id saved:\", response.file_id);\r",
+							"} else {\r",
+							"  console.log(\"Upload failed:\", response.message || \"No file_id in response\");\r",
+							"}\r",
+							"\r",
+							"// Verify status code\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"// Validate file type (optional, based on response if backend returns it)\r",
+							"if (response.file_type) {\r",
+							"  const allowedTypes = [\"application/vnd.openxmlformats-officedocument.presentationml.presentation\", \r",
+							"                       \"application/vnd.openxmlformats-officedocument.wordprocessingml.document\", \r",
+							"                       \"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet\"];\r",
+							"  pm.test(\"File type is valid\", function () {\r",
+							"    pm.expect(allowedTypes).to.include(response.file_type);\r",
+							"  });\r",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "multipart/form-data",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": []
+						},
+						{
+							"key": "client_email",
+							"value": "client@example.com",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8000/upload?email=ops@example.com",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"upload"
+					],
+					"query": [
+						{
+							"key": "email",
+							"value": "ops@example.com"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List Files",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// Pre-request Script for /files\r",
+							"\r",
+							"const accessToken = pm.environment.get(\"access_token\");\r",
+							"\r",
+							"if (!accessToken || typeof accessToken !== \"string\" || accessToken.trim() === \"\") {\r",
+							"    console.log(\"No valid access_token found. Please login first using /login endpoint.\");\r",
+							"    throw new Error(\"Authentication required\");\r",
+							"}\r",
+							"\r",
+							"const baseUrl = pm.environment.get(\"base_url\") || \"http://localhost:8000\";\r",
+							"pm.request.url = `${baseUrl}/files`;\r",
+							"\r",
+							"pm.request.headers.add({\r",
+							"    key: \"Authorization\",\r",
+							"    value: `Bearer ${accessToken}`\r",
+							"});\r",
+							"pm.request.headers.add({\r",
+							"    key: \"Accept\",\r",
+							"    value: \"application/json\"\r",
+							"});\r",
+							"\r",
+							"console.log(\"Request prepared:\", {\r",
+							"    url: pm.request.url.toString(),\r",
+							"    authorization: `Bearer ${accessToken.substring(0, 10)}...`\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Tests Script for /files\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response is a valid file list\", function () {\r",
+							"    const response = pm.response.json();\r",
+							"    pm.expect(response).to.be.an(\"array\");\r",
+							"    response.forEach(file => {\r",
+							"        pm.expect(file).to.have.property(\"id\");\r",
+							"        pm.expect(file).to.have.property(\"filename\");\r",
+							"        pm.expect(file.id).to.be.a(\"string\");\r",
+							"        pm.expect(file.filename).to.be.a(\"string\");\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							"// Optionally save the first file_id for later use\r",
+							"const response = pm.response.json();\r",
+							"if (response.length > 0) {\r",
+							"    pm.environment.set(\"file_id\", response[0].id);\r",
+							"    console.log(\"file_id saved:\", response[0].id);\r",
+							"} else {\r",
+							"    console.log(\"No files found for the user.\");\r",
+							"}\r",
+							"\r",
+							"console.log(\"Files listed:\", JSON.stringify(response, null, 2));"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer <access_token>",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8000/files",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"files"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Download File",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// Pre-request Script for /files/download/{file_id}\r",
+							"\r",
+							"const accessToken = pm.environment.get(\"access_token\");\r",
+							"const fileId = pm.environment.get(\"file_id\");\r",
+							"const token = pm.environment.get(\"token\");\r",
+							"\r",
+							"if (!accessToken || typeof accessToken !== \"string\" || accessToken.trim() === \"\") {\r",
+							"    console.log(\"No valid access_token found. Please set it from the /login response.\");\r",
+							"    throw new Error(\"Authentication required\");\r",
+							"}\r",
+							"\r",
+							"if (!fileId || typeof fileId !== \"string\" || fileId.trim() === \"\") {\r",
+							"    console.log(\"No file_id found. Please set it from the /files response.\");\r",
+							"    throw new Error(\"File ID required\");\r",
+							"}\r",
+							"\r",
+							"if (!token || typeof token !== \"string\" || token.trim() === \"\") {\r",
+							"    console.log(\"No token found. Please set it from the download_link response.\");\r",
+							"    throw new Error(\"Token required\");\r",
+							"}\r",
+							"\r",
+							"const baseUrl = pm.environment.get(\"base_url\") || \"http://localhost:8000\";\r",
+							"pm.request.url = `${baseUrl}/files/download/${fileId}?token=${encodeURIComponent(token)}`;\r",
+							"\r",
+							"pm.request.headers.add({\r",
+							"    key: \"Authorization\",\r",
+							"    value: `Bearer ${accessToken}`\r",
+							"});\r",
+							"pm.request.headers.add({\r",
+							"    key: \"Accept\",\r",
+							"    value: \"application/octet-stream\"\r",
+							"});\r",
+							"\r",
+							"console.log(\"Request prepared:\", {\r",
+							"    url: pm.request.url.toString(),\r",
+							"    authorization: `Bearer ${accessToken.substring(0, 10)}...`,\r",
+							"    token: token.substring(0, 10) + \"...\"\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Tests Script for /files/download/{file_id}\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response is a file download\", function () {\r",
+							"    const contentType = pm.response.headers.get(\"Content-Type\");\r",
+							"    const contentDisposition = pm.response.headers.get(\"Content-Disposition\");\r",
+							"    pm.expect(contentType).to.equal(\"application/octet-stream\");\r",
+							"    pm.expect(contentDisposition).to.include(\"attachment\");\r",
+							"});\r",
+							"\r",
+							"// Handle file download\r",
+							"const contentDisposition = pm.response.headers.get(\"Content-Disposition\");\r",
+							"if (contentDisposition) {\r",
+							"    const filename = contentDisposition.split(\"filename=\")[1].replace(/['\"]/g, \"\");\r",
+							"    pm.response.responseType = \"blob\"; // Treat as binary data\r",
+							"    const fileData = pm.response.text(); // Raw binary data\r",
+							"    console.log(`File downloaded: ${filename} (data length: ${fileData.length})`);\r",
+							"\r",
+							"    // Visualize the file (Postman v10+ limitation)\r",
+							"    pm.visualizer.set(new File([fileData], filename, { type: \"application/octet-stream\" }));\r",
+							"} else {\r",
+							"    console.log(\"No file downloaded:\", pm.response.json());\r",
+							"    pm.test(\"Response contains error\", function () {\r",
+							"        pm.expect(pm.response.json().detail).to.exist;\r",
+							"    }).skip();\r",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer <access_token>",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8000/files/download/{file_id}?email=client@example.com",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"files",
+						"download",
+						"{file_id}"
+					],
+					"query": [
+						{
+							"key": "email",
+							"value": "client@example.com"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
